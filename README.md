@@ -1,5 +1,3 @@
-Transcriptome_Project
-
 # Load libraries
 
 # install.packages("BiocManager")
@@ -23,6 +21,7 @@ library(clusterProfiler)
 library(ggpubr)
 library(AnnotationHub)
 library(scales)
+library(ggplotify)
 
 # Working directory
 setwd("/Users/galarza/Documents/NMSU/Chapter_4_(Transcriptome_Analysis)/Data/Transcriptome/Data_analysis")
@@ -142,7 +141,8 @@ CF_CF_volcano_plot <- ggplot(data = ordered_data_CF_CF, aes(x = log2FoldChange, 
   labs(color = 'Gene Regulation',
        x = expression("log"[2]*"[FC] CF-/CF+"), y = expression("-log"[10]*"[FDR]")) + 
   scale_x_continuous(breaks = seq(-12, 12, 2)) +
-  theme_classic(base_size = 14)
+  theme_classic(base_size = 14) + 
+  guides(alpha = "none", color = "none")
 
 # Heat map colors
 my_colors <- colorRampPalette(c("yellow", "orange4", "midnightblue"))(50)
@@ -176,7 +176,7 @@ CF_CF_heatmap <- pheatmap(CF_CF_zscore_subset,
          annotation_names_col = FALSE,
          annotation_colors = status_annotation_coloration,
          fontsize = 12,
-         legend = TRUE)
+         legend = FALSE)
 
 # Variance stabilizing transformation
 CF_CF_vsd <- vst(CF_CF_dds, blind = FALSE)
@@ -191,7 +191,8 @@ CF_CF_PCA_plot <- ggplot(CF_CF_PCA_data, aes(x = PC1, y = PC2, color = Status)) 
   geom_text(aes(label = name), vjust = -1, show.legend = FALSE, size = 6) +
   ylim(-40,40) +
   xlim(-40, 40) +
-  theme_classic(base_size = 20)
+  theme_classic(base_size = 14) +
+  theme(legend.position="left")
 
 # Heatmap (generate distance matrix and choose colors)
 CF_CF_sampleDists <- dist(t(assay(CF_CF_vsd)))
@@ -310,7 +311,8 @@ PBF_PBF_volcano_plot <- ggplot(data = ordered_data_PBF_PBF, aes(x = log2FoldChan
   labs(color = 'Gene Regulation',
        x = expression("log"[2]*"[FC] PBF-/PBF+"), y = expression("-log"[10]*"[FDR]")) + 
   scale_x_continuous(breaks = seq(-12, 12, 2)) +
-  theme_classic(base_size = 14)
+  theme_classic(base_size = 14) + 
+  guides(alpha = "none", color = "none")
 
 # Annotation names
 PBF_PBF_annot_info <- as.data.frame(colData(PBF_PBF_dds)[,c("Status")])
@@ -352,7 +354,8 @@ PBF_PBF_PCA_plot <- ggplot(PBF_PBF_PCA_data, aes(x = PC1, y = PC2, color = Statu
   geom_text(aes(label = name), vjust = -1, show.legend = FALSE, size = 6) +
   ylim(-30,30) +
   xlim(-50, 50) +
-  theme_classic(base_size = 20)
+  theme_classic(base_size = 20) +
+  theme(legend.position="bottom")
 
 # Heatmap (generate distance matrix and choose colors)
 PBF_PBF_sampleDists <- dist(t(assay(PBF_PBF_vsd)))
@@ -469,7 +472,8 @@ PS_volcano_plot <- ggplot(data = ordered_data_positive_status, aes(x = log2FoldC
   labs(color = 'Gene Regulation',
        x = expression("log"[2]*"[FC] CF+/PBF+"), y = expression("-log"[10]*"[FDR]")) + 
   scale_x_continuous(breaks = seq(-12, 12, 2)) +
-  theme_classic(base_size = 14)
+  theme_classic(base_size = 14) + 
+  guides(alpha = "none", color = "none")
 
 # Heat map colors
 treatment_annotation_coloration <- list(Treatment = c(CF = "#F8766D", PBF = "#00AFBB"))
@@ -514,7 +518,8 @@ PS_PCA_plot <- ggplot(PS_PCA_data, aes(x = PC1, y = PC2, color = Treatment)) +
   geom_text(aes(label = name), vjust = -1, show.legend = FALSE, size = 6) +
   ylim(-30,30) +
   xlim(-50, 50) +
-  theme_classic(base_size = 20)
+  theme_classic(base_size = 20) +
+  theme(legend.position="bottom")
 
 # Heatmap (generate distance matrix and choose colors)
 PS_sampleDists <- dist(t(assay(PS_vsd)))
@@ -631,7 +636,8 @@ NS_volcano_plot <- ggplot(data = ordered_data_negative_status, aes(x = log2FoldC
   labs(color = 'Gene Regulation',
        x = expression("log"[2]*"[FC] CF-/PBF-"), y = expression("-log"[10]*"[FDR]")) + 
   scale_x_continuous(breaks = seq(-12, 12, 2)) +
-  theme_classic(base_size = 14)
+  theme_classic(base_size = 14) + 
+  guides(alpha = "none", color = "none")
 
 # Annotation names
 NS_annot_info <- as.data.frame(colData(NS_dds)[,c("Treatment")])
@@ -673,7 +679,8 @@ NS_PCA_plot <- ggplot(NS_PCA_data, aes(x = PC1, y = PC2, color = Treatment)) +
   geom_text(aes(label = name), vjust = -1, show.legend = FALSE, size = 6) +
   ylim(-30,30) +
   xlim(-50, 50) +
-  theme_classic(base_size = 20)
+  theme_classic(base_size = 20) +
+  theme(legend.position="bottom")
 
 # Heatmap (generate distance matrix and choose colors)
 NS_sampleDists <- dist(t(assay(NS_vsd)))
@@ -937,7 +944,7 @@ PS_DOWN_GO <- ggplot(data = PS_DOWN, aes(x = append, y = RichFactor,
   geom_point(aes(reorder(append, -adjusted_p_value), y=RichFactor)) +
   coord_flip() +
   theme_linedraw(base_size = 12) +
-  labs(x = "GOterm", size="GeneNumber", color="qValue") +
+  labs(x = "GOterm", size="GeneNumber", color="qValue    ") +
   scale_color_gradient(low="red", high="blue") +
   scale_size_continuous(limits = c(1, 3),
                         range = c(1,5)) +
@@ -1239,7 +1246,7 @@ NS_KEGG_plot <- ggplot(data = NS_KEGG, aes(x = Description, y = RichFactor,
 ######################################################
 
 CF_CF_volcano_plot
-CF_CF_heatmap
+CF_CF_heatmap <- as.ggplot(CF_CF_heatmap)
 CF_CF_PCA_plot
 CF_CF_distance_matrix
 CF_UP_GO
@@ -1247,7 +1254,7 @@ CF_DOWN_GO
 CF_KEGG_plot
 
 PBF_PBF_volcano_plot
-PBF_PBF_heatmap
+PBF_PBF_heatmap <- as.ggplot(PBF_PBF_heatmap)
 PBF_PBF_PCA_plot
 PBF_PBF_distance_matrix
 PBF_UP_GO
@@ -1255,7 +1262,7 @@ PBF_DOWN_GO
 PBF_KEGG_plot
 
 PS_volcano_plot
-PS_heatmap
+PS_heatmap <- as.ggplot(PS_heatmap)
 PS_PCA_plot
 PS_distance_matrix
 PS_UP_GO
@@ -1263,15 +1270,150 @@ PS_DOWN_GO
 PS_KEGG_plot
 
 NS_volcano_plot
-NS_heatmap
+NS_heatmap <- as.ggplot(NS_heatmap)
 NS_PCA_plot
 NS_distance_matrix
 NS_UP_GO
 NS_DOWN_GO
 NS_KEGG_plot
 
+CF_1 <- ggarrange(CF_CF_volcano_plot,
+          CF_CF_heatmap,
+          CF_CF_PCA_plot,
+          labels = c("A", "B", "C"),
+          hjust= 0,
+          vjust = 1,
+          nrow = 1,
+          ncol = 3,
+          font.label = list(size = 18, 
+                            face = "bold", 
+                            color ="black"),
+          align = "none",
+          common.legend = TRUE,
+          legend = "none")
 
+CF_2 <- ggarrange(CF_UP_GO + rremove("x.title"),
+                  CF_DOWN_GO + rremove("x.title"),
+                  CF_KEGG_plot,
+                  labels = c("D", "E", "F"),
+                  hjust= 0,
+                  vjust = 1,
+                  nrow = 3,
+                  ncol = 1,
+                  font.label = list(size = 18,
+                                    face = "bold",
+                                    color ="black"),
+                  align = "h",
+                  common.legend = FALSE,
+                  legend = "right")
 
+ggarrange(CF_1,
+          CF_2,
+          ncol = 1,
+          heights = c(0.75,2))
 
+PBF_1 <- ggarrange(PBF_PBF_volcano_plot,
+                  PBF_PBF_heatmap,
+                  PBF_PBF_PCA_plot,
+                  labels = c("A", "B", "C"),
+                  hjust= 0,
+                  vjust = 1,
+                  nrow = 1,
+                  ncol = 3,
+                  font.label = list(size = 18, 
+                                    face = "bold", 
+                                    color ="black"),
+                  align = "none",
+                  common.legend = TRUE,
+                  legend = "none")
 
+PBF_2 <- ggarrange(PBF_UP_GO + rremove("x.title"),
+                  PBF_DOWN_GO + rremove("x.title"),
+                  PBF_KEGG_plot,
+                  labels = c("D", "E", "F"),
+                  hjust= 0,
+                  vjust = 1,
+                  nrow = 3,
+                  ncol = 1,
+                  font.label = list(size = 18,
+                                    face = "bold",
+                                    color ="black"),
+                  align = "h",
+                  common.legend = FALSE,
+                  legend = "right")
+
+ggarrange(PBF_1,
+          PBF_2,
+          ncol = 1,
+          heights = c(0.75,2))
+
+PS_1 <- ggarrange(PS_volcano_plot,
+                  PS_heatmap,
+                  PS_PCA_plot,
+                  labels = c("A", "B", "C"),
+                  hjust= 0,
+                  vjust = 1,
+                  nrow = 1,
+                  ncol = 3,
+                  font.label = list(size = 18, 
+                                    face = "bold", 
+                                    color ="black"),
+                  align = "none",
+                  common.legend = TRUE,
+                  legend = "none")
+
+PS_2 <- ggarrange(PS_UP_GO + rremove("x.title"),
+                  PS_DOWN_GO + rremove("x.title"),
+                  PS_KEGG_plot,
+                  labels = c("D", "E", "F"),
+                  hjust= 0,
+                  vjust = 1,
+                  nrow = 3,
+                  ncol = 1,
+                  font.label = list(size = 18,
+                                    face = "bold",
+                                    color ="black"),
+                  align = "h",
+                  common.legend = FALSE,
+                  legend = "right")
+
+ggarrange(PS_1,
+          PS_2,
+          ncol = 1,
+          heights = c(0.75,2))
+
+NS_1 <- ggarrange(NS_volcano_plot,
+                  NS_heatmap,
+                  NS_PCA_plot,
+                  labels = c("A", "B", "C"),
+                  hjust= 0,
+                  vjust = 1,
+                  nrow = 1,
+                  ncol = 3,
+                  font.label = list(size = 18, 
+                                    face = "bold", 
+                                    color ="black"),
+                  align = "none",
+                  common.legend = TRUE,
+                  legend = "none")
+
+NS_2 <- ggarrange(NS_UP_GO + rremove("x.title"),
+                  NS_DOWN_GO + rremove("x.title"),
+                  NS_KEGG_plot,
+                  labels = c("D", "E", "F"),
+                  hjust= 0,
+                  vjust = 1,
+                  nrow = 3,
+                  ncol = 1,
+                  font.label = list(size = 18,
+                                    face = "bold",
+                                    color ="black"),
+                  align = "h",
+                  common.legend = FALSE,
+                  legend = "right")
+
+ggarrange(NS_1,
+          NS_2,
+          ncol = 1,
+          heights = c(0.75,2))
 
